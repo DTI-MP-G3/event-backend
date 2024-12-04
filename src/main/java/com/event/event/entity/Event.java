@@ -1,0 +1,66 @@
+package com.event.event.entity;
+
+import com.event.event.enums.EventStatus;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.OffsetDateTime;
+
+
+@Getter
+@Setter
+@Entity
+@Table(name="events")
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_id_gen")
+    @SequenceGenerator(name = "event_id_gen", sequenceName = "events_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @NotNull
+    private String venue;
+
+    @Size(max = 4000)
+    @NotNull
+    @Column(name="description", nullable = false, length = 4000)
+    private String description;
+
+    @Column(name = "event_date", nullable = false)
+    private OffsetDateTime eventDate;
+
+    @Column(name = "start_time")
+    private OffsetDateTime startTime;
+
+    @Column(name = "end_time")
+    private OffsetDateTime endTime;
+
+    @Column(name = "total_tickets")
+    private Integer totalTickets;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "event_status DEFAULT 'DRAFT'")
+    private EventStatus status = EventStatus.DRAFT;
+
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
+
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
+}
