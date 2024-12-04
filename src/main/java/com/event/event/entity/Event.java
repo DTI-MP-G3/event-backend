@@ -1,12 +1,15 @@
 package com.event.event.entity;
 
 import com.event.event.enums.EventStatus;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.OffsetDateTime;
 
@@ -15,6 +18,7 @@ import java.time.OffsetDateTime;
 @Setter
 @Entity
 @Table(name="events")
+
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_id_gen")
@@ -48,7 +52,7 @@ public class Event {
     private Integer totalTickets;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "event_status DEFAULT 'DRAFT'")
+    @Column(name = "status",nullable = false)
     private EventStatus status = EventStatus.DRAFT;
 
     @NotNull
@@ -63,4 +67,21 @@ public class Event {
 
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
+
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = OffsetDateTime.now();
+        updatedAt = OffsetDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
+
+    @PreRemove
+    protected void onRemove() {
+        deletedAt = OffsetDateTime.now();
+    }
 }
