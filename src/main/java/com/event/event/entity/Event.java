@@ -32,6 +32,7 @@ public class Event {
     private String name;
 
     @NotNull
+    @Column(name="venue",nullable = false)
     private String venue;
 
     @Size(max = 4000)
