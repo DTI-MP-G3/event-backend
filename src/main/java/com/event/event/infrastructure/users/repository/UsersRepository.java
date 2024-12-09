@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UsersRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailContainsIgnoreCase(String email);
-
+    boolean existsByReferralCode(String referralCode);
+    Optional<User>  findByReferralCode(String referralCode);
 }
 

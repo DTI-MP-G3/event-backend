@@ -17,6 +17,7 @@ public class CreateUserRequestDTO {
     private String email;
     private String password;
     private String name;
+    private String referralCode;
 
     public User toEntity(){
         User user= new User();

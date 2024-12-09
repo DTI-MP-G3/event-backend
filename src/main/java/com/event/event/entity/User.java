@@ -66,6 +66,12 @@ public class User {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
+    @Column (name= "referral_code")
+    private String referralCode;
+
+    @Column(name = "referred_by")
+    private Long referredBy;
+
     @PrePersist
     protected void onCreate() {
         createdAt = OffsetDateTime.now();
