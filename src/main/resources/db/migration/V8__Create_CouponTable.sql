@@ -1,0 +1,38 @@
+CREATE TABLE coupons (
+   id BIGSERIAL PRIMARY KEY,
+   code VARCHAR(20) UNIQUE NOT NULL,
+   discount_type VARCHAR(20) NOT NULL,
+   discount_value DECIMAL(10,2) NOT NULL,
+   max_discount_amount DECIMAL(10,2),
+   min_purchase_amount DECIMAL(10,2),
+   start_date TIMESTAMP WITH TIME ZONE  NOT NULL,
+   end_date TIMESTAMP WITH TIME ZONE  NOT NULL,
+   is_active BOOLEAN DEFAULT true,
+   usage_limit INTEGER,
+   current_usage_count INTEGER DEFAULT 0,
+   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   deleted_at TIMESTAMP WITH TIME ZONE,
+   CONSTRAINT check_discount_type CHECK (discount_type IN ('PERCENTAGE', 'FIXED'))
+);
+
+CREATE TABLE event_coupons (
+   id BIGSERIAL PRIMARY KEY,
+   coupon_id BIGINT REFERENCES coupons(id),
+   event_id BIGINT NOT NULL REFERENCES events(id),
+   organizer_id BIGINT NOT NULL REFERENCES users(id),
+   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE user_coupons (
+   id BIGSERIAL PRIMARY KEY,
+   coupon_id BIGINT REFERENCES coupons(id),
+   user_id BIGINT NOT NULL REFERENCES users(id),
+   is_used BOOLEAN DEFAULT false,
+   used_date TIMESTAMP WITH TIME ZONE ,
+   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+   deleted_at TIMESTAMP WITH TIME ZONE
+);

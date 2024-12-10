@@ -91,7 +91,7 @@ public class CreateUserUsecaseImpl implements CreateUserUsecase {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            applicationEventPublisher.publishEvent(new ReferralEventReferee(this,idReferrer));
+            applicationEventPublisher.publishEvent(new ReferralEventReferee(this,idReferrer,idReferree));
         }
         return newUser;
     }

@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @Slf4j
@@ -19,7 +21,7 @@ public class ReferralEventRefereeListener  {
         this.referralPointUsecase = referralPointUsecase;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
     public void onApplicationEvent(ReferralEventReferee event) {
         log.info("User with ID {} was refer someone", event.getUserId());
