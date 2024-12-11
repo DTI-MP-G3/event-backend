@@ -1,6 +1,7 @@
 package com.event.event.entity;
 
-import com.event.event.enums.TicketStatus;
+import com.event.event.common.exception.InsufficientTicketsException;
+import com.event.event.enums.EventStatus;
 import com.event.event.enums.TicketTypeStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -15,34 +16,38 @@ import java.time.OffsetDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name="tickets")
-public class Ticket {
+@Table(name="ticket_types")
+public class TicketType {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_id_gen")
-    @SequenceGenerator(name = "ticket_id_gen", sequenceName = "ticket_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_type_id_gen")
+    @SequenceGenerator(name = "ticket_type_id_gen", sequenceName = "ticket_type_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "event_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ticket_type_id", nullable = false)
-    private TicketType ticketType;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Size(max= 100)
+    @NotNull
+    @Column(name = "name")
+    private String name;
 
     @NotNull
     @Column(name="price",precision = 10, scale = 2)
     private BigDecimal price;
 
+    @NotNull
+    @Column(name="quantity")
+    private Integer quantity;
+
+    @NotNull
+    @Column(name ="quantity_available")
+    private Integer quantityAvailable;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
-    private TicketStatus status = TicketStatus.AVAILABLE;
+    private TicketTypeStatus status = TicketTypeStatus.AVAILABLE;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -72,6 +77,13 @@ public class Ticket {
     @PreRemove
     protected void onRemove() {
         deletedAt = OffsetDateTime.now();
+    }
+
+    public void decreaseAvailable(int amount) {
+        if (this.quantityAvailable < amount) {
+            throw new InsufficientTicketsException("Not enough tickets available");
+        }
+        this.quantityAvailable -= amount;
     }
 
 }
