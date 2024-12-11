@@ -2,6 +2,7 @@ package com.event.event.infrastructure.events.controller;
 
 import com.event.event.common.response.ApiResponse;
 import com.event.event.infrastructure.events.dto.CreateEventRequestDTO;
+import com.event.event.infrastructure.security.Claims;
 import com.event.event.usecase.event.CreateEventUsecase;
 import com.event.event.usecase.event.SearchEventUseCase;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +49,8 @@ public class EventController {
     @PreAuthorize("hasAuthority('SCOPE_EVENT_ORGANIZER')")
     @PostMapping
     public ResponseEntity<?> createEvent(@RequestBody CreateEventRequestDTO req){
-        return ApiResponse.successfulResponse("Create New User Success",createEventUsecase.createEvent(req));
+        Long userId = Claims.getUserIdFromJwt();
+        return ApiResponse.successfulResponse("Create New User Success",createEventUsecase.createEvent(req, userId));
     }
 
 

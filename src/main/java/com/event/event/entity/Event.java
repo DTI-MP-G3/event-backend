@@ -26,6 +26,10 @@ public class Event {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_organizer_id", nullable = false)
+    private User organizer;
+
     @Size(max = 255)
     @NotNull
     @Column(name = "name", nullable = false)
