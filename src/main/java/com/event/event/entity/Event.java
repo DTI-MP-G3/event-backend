@@ -1,5 +1,6 @@
 package com.event.event.entity;
 
+import com.event.event.entity.Ticket.TicketType;
 import com.event.event.enums.EventStatus;
 
 import jakarta.persistence.*;
@@ -8,10 +9,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Type;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 
 @Getter
@@ -72,6 +72,9 @@ public class Event {
 
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
+
+    @OneToMany( mappedBy = "event", cascade = CascadeType.PERSIST )
+    private Set<TicketType> ticketTypes;
 
 
     @PrePersist

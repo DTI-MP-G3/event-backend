@@ -1,25 +1,28 @@
-package com.event.event.entity;
+package com.event.event.entity.Ticket;
 
+import com.event.event.entity.Event;
+import com.event.event.entity.User;
 import com.event.event.enums.TicketStatus;
-import com.event.event.enums.TicketTypeStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@Data
 @Table(name="tickets")
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_id_gen")
-    @SequenceGenerator(name = "ticket_id_gen", sequenceName = "ticket_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "ticket_id_gen", sequenceName = "tickets_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -35,14 +38,15 @@ public class Ticket {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull
-    @Column(name="price",precision = 10, scale = 2)
-    private BigDecimal price;
-
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
     private TicketStatus status = TicketStatus.AVAILABLE;
+
+    @Column(name="ticket_code", nullable = false, unique = true)
+    private String ticketCode ;
+
+    @Column(name="purchase_date")
+    private OffsetDateTime purchaseDate;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")

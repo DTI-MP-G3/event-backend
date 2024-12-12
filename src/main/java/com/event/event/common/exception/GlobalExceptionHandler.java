@@ -27,4 +27,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleGeneralException(Exception ex) {
         return ApiResponse.failedResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<?> handleForbiddenException(Exception ex){
+        return ApiResponse.failedResponse(ex.getMessage());
+    }
 }

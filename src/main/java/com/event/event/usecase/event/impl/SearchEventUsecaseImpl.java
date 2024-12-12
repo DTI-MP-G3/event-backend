@@ -1,5 +1,6 @@
 package com.event.event.usecase.event.impl;
 
+import com.event.event.common.exception.DataNotFoundException;
 import com.event.event.entity.Event;
 import com.event.event.infrastructure.events.dto.EventSearchResponseDTO;
 import com.event.event.infrastructure.events.repository.EventRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -48,6 +50,11 @@ public class SearchEventUsecaseImpl implements SearchEventUseCase {
         Specification<Event> spec = EventSpecification.searchEvents(name, venue, eventDate);
         Page<Event> events = eventRepository.findAll(spec, pageable);
         return eventSearchResponseMapper.toDTOPage(events);
+    }
+
+
+    public Optional<Event> findEventById (Integer id){
+        return eventRepository.findById(id);
     }
 
 }

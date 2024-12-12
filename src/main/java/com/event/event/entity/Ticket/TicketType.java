@@ -1,6 +1,7 @@
-package com.event.event.entity;
+package com.event.event.entity.Ticket;
 
 import com.event.event.common.exception.InsufficientTicketsException;
+import com.event.event.entity.Event;
 import com.event.event.enums.EventStatus;
 import com.event.event.enums.TicketTypeStatus;
 import jakarta.persistence.*;
@@ -18,9 +19,10 @@ import java.time.OffsetDateTime;
 @Setter
 @Table(name="ticket_types")
 public class TicketType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ticket_type_id_gen")
-    @SequenceGenerator(name = "ticket_type_id_gen", sequenceName = "ticket_type_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "ticket_type_id_gen", sequenceName = "ticket_types_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -44,6 +46,9 @@ public class TicketType {
     @NotNull
     @Column(name ="quantity_available")
     private Integer quantityAvailable;
+
+    @Column(name="description")
+    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
@@ -72,6 +77,9 @@ public class TicketType {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = OffsetDateTime.now();
+        if(quantityAvailable == 0){
+            status = TicketTypeStatus.SOLD_OUT;
+        }
     }
 
     @PreRemove
