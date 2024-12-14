@@ -1,5 +1,6 @@
 package com.event.event.entity.coupons;
 
+import com.event.event.enums.CouponType;
 import com.event.event.enums.DiscountType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,11 @@ public class Coupon {
     @SequenceGenerator(name = "coupon_id_gen", sequenceName = "coupons_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "coupon_type",nullable = false)
+    @NotNull
+    private CouponType couponType = CouponType.GENERAL;
 
     @Size(max = 20)
     @NotNull

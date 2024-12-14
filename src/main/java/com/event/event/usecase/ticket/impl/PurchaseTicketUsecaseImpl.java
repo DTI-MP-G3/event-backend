@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PurchaseTicketUsecaseImpl implements PurchaseTicketUsecase {
 
-    EventRepository eventRepository;
-    TicketRepository ticketRepository;
+    private final EventRepository eventRepository;
+    private final TicketRepository ticketRepository;
 
-    TicketTypeRepository ticketTypeRepository;
-    UsersRepository usersRepository;
-    TicketCodeGenerator ticketCodeGenerator;
+    private final TicketTypeRepository ticketTypeRepository;
+    private final UsersRepository usersRepository;
+    private final TicketCodeGenerator ticketCodeGenerator;
 
     public PurchaseTicketUsecaseImpl(EventRepository eventRepository, TicketRepository ticketRepository, TicketTypeRepository ticketTypeRepository, UsersRepository usersRepository, TicketCodeGenerator ticketCodeGenerator) {
         this.eventRepository = eventRepository;

@@ -94,4 +94,11 @@ public class TicketType {
         this.quantityAvailable -= amount;
     }
 
+    public void increaseAvailable(int amount) {
+        if (this.quantityAvailable < this.quantityAvailable + amount) {
+            throw new InsufficientTicketsException("Exceed the ticket availability");
+        }
+        this.quantityAvailable += amount;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.event.event.usecase.coupon.impl;
 
 import com.event.event.entity.coupons.Coupon;
 import com.event.event.entity.coupons.UserCoupon;
+import com.event.event.enums.CouponType;
 import com.event.event.enums.DiscountType;
 import com.event.event.infrastructure.coupons.repository.CouponRepository;
 import com.event.event.infrastructure.coupons.repository.EventCouponRepository;
@@ -40,6 +41,7 @@ public class CreateCouponUsecaseImpl implements CreateCouponUsecase {
         Coupon newCoupon = new Coupon();
         newCoupon.setCode(couponCodeService.referralCouponGenerator(userId));
         newCoupon.setDiscountType(DiscountType.PERCENTAGE);
+        newCoupon.setCouponType(CouponType.USER);
 
         newCoupon.setDiscountValue(new BigDecimal("0.10"));
         newCoupon.setStartDate(OffsetDateTime.now());

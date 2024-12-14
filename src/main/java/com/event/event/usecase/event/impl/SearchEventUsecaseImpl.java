@@ -52,7 +52,7 @@ public class SearchEventUsecaseImpl implements SearchEventUseCase {
         return eventSearchResponseMapper.toDTOPage(events);
     }
 
-
+    @Override
     public Optional<Event> findEventById (Integer id){
         return eventRepository.findById(id);
     }

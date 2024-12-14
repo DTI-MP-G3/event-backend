@@ -2,11 +2,13 @@ package com.event.event.usecase.point.impl;
 
 import com.event.event.entity.Point;
 import com.event.event.enums.RewardPoints;
-import com.event.event.infrastructure.points.dto.PointsRepository;
+import com.event.event.infrastructure.points.repository.PointsRepository;
 import com.event.event.usecase.point.ReferralPointUsecase;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,4 +35,11 @@ public class ReferralPointUsecaseImpl implements ReferralPointUsecase {
         }
         return newPoint;
     }
+
+    @Override
+    public Optional<Point> getPointByIdAndUserId(Long userId, Long pointId){
+        return pointsRepository.findByUserIdAndId(userId, pointId);
+    }
+
+
 }
