@@ -85,7 +85,7 @@ public class Booking {
 
 
         @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
-        private List<BookingDetail> bookingDetails = new ArrayList<>();;
+        private List<BookingDetail> bookingDetails = new ArrayList<>();
 
         @PrePersist
         protected void onCreate() {

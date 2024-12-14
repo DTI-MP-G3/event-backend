@@ -1,0 +1,15 @@
+CREATE TABLE payments (
+  id BIGSERIAL PRIMARY KEY,
+  booking_id BIGINT REFERENCES bookings(id),
+  amount DECIMAL(10,2) NOT NULL,
+  payment_type VARCHAR(20) NOT NULL,
+  payment_status VARCHAR(20) NOT NULL,
+  transaction_id VARCHAR(100) UNIQUE,
+  payment_date TIMESTAMP WITH TIME ZONE,
+  expiry_date TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP WITH TIME ZONE,
+  CONSTRAINT check_payment_type CHECK (payment_type IN ('CREDIT_CARD', 'DEBIT_CARD', 'BANK_TRANSFER', 'E_WALLET', 'POINTS','QR')),
+  CONSTRAINT check_payment_status CHECK (payment_status IN ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'REFUNDED', 'TIME_EXPIRED'))
+);
