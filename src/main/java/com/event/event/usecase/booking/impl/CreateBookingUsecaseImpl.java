@@ -18,13 +18,14 @@ import com.event.event.enums.CouponType;
 import com.event.event.enums.DiscountType;
 import com.event.event.infrastructure.bookings.dto.BookingDetailRequestDTO;
 import com.event.event.infrastructure.bookings.dto.BookingRequestDTO;
-import com.event.event.infrastructure.bookings.dto.BookingResponseDTO;
+import com.event.event.infrastructure.bookings.dto.CreateBookingResponseDTO;
 import com.event.event.infrastructure.bookings.dto.calculation.BookingCalculationDTO;
 import com.event.event.infrastructure.bookings.repository.BookingRepository;
 
 import com.event.event.usecase.booking.CreateBookingUsecase;
 import com.event.event.usecase.coupon.SearchCouponUsecase;
 import com.event.event.usecase.event.SearchEventUseCase;
+import com.event.event.usecase.payments.PaymentUsecase;
 import com.event.event.usecase.point.ReferralPointUsecase;
 import com.event.event.usecase.ticketType.SearchTicketTypeUsecase;
 import com.event.event.usecase.ticketType.TicketTypeUsecase;
@@ -52,6 +53,7 @@ public class CreateBookingUsecaseImpl implements CreateBookingUsecase {
     private final ReferralPointUsecase referralPointUsecase;
     private final SearchTicketTypeUsecase searchTicketTypeUsecase;
     private final TicketTypeUsecase ticketTypeUsecase;
+    private final PaymentUsecase paymentUsecase;
 
     public CreateBookingUsecaseImpl(BookingRepository bookingRepository,
                                     SearchUserUsecase searchUserUsecase,
@@ -59,7 +61,8 @@ public class CreateBookingUsecaseImpl implements CreateBookingUsecase {
                                     SearchCouponUsecase searchCouponUsecase,
                                     ReferralPointUsecase referralPointUsecase,
                                     SearchTicketTypeUsecase searchTicketTypeUsecase,
-                                    TicketTypeUsecase ticketTypeUsecase) {
+                                    TicketTypeUsecase ticketTypeUsecase,
+                                    PaymentUsecase paymentUsecase) {
         this.bookingRepository = bookingRepository;
         this.searchUserUsecase = searchUserUsecase;
         this.searchEventUseCase = searchEventUseCase;
@@ -67,11 +70,12 @@ public class CreateBookingUsecaseImpl implements CreateBookingUsecase {
         this.referralPointUsecase = referralPointUsecase;
         this.searchTicketTypeUsecase = searchTicketTypeUsecase;
         this.ticketTypeUsecase =ticketTypeUsecase;
+        this.paymentUsecase =paymentUsecase;
     }
 
     @Override
     @Transactional
-    public BookingResponseDTO createBooking(BookingRequestDTO dto, Long userId  ){
+    public CreateBookingResponseDTO createBooking(BookingRequestDTO dto, Long userId  ){
          Integer eventId = dto.getEventId();
          Long couponId = dto.getCouponId();
          Long pointId = dto.getPointId();
@@ -164,12 +168,11 @@ public class CreateBookingUsecaseImpl implements CreateBookingUsecase {
 
         log.info("Saving Booking....");
         Booking savedBooking = bookingRepository.save(newBooking);
-        BookingResponseDTO response = new BookingResponseDTO();
-        return response.toResponseDTO(savedBooking);
-
+        CreateBookingResponseDTO response = new CreateBookingResponseDTO();
+        Long paymentId = paymentUsecase.createPaymentBillId(savedBooking);
+        log.info("Payment ID : {}", paymentId);
+        return response.toResponseDTO(savedBooking, paymentId);
     }
-
-
 
 
 

@@ -48,7 +48,7 @@ public class Payment {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_type", nullable = false)
+    @Column(name = "payment_type")
     private PaymentType paymentType;
 
     @Enumerated(EnumType.STRING)
@@ -97,5 +97,6 @@ public class Payment {
                 booking.getId(),
                 OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         );
+        return transactionId;
     }
 }

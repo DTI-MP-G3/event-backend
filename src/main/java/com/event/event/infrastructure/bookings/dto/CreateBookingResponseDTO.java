@@ -17,9 +17,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookingResponseDTO {
+public class CreateBookingResponseDTO {
     private Long id;
     private String bookingNumber;
+    private Long paymentId;
     private String status;
     private BigDecimal subtotal;
     private BigDecimal discount;
@@ -31,11 +32,13 @@ public class BookingResponseDTO {
 
 
 
-    public BookingResponseDTO toResponseDTO(Booking booking) {
-        return BookingResponseDTO.builder()
+
+    public CreateBookingResponseDTO toResponseDTO(Booking booking,Long paymentId) {
+        return CreateBookingResponseDTO.builder()
                 .id(booking.getId())
                 .bookingNumber(booking.getBookingNumber())
                 .status(booking.getStatus().toString())
+                .paymentId(paymentId)
                 .subtotal(booking.getSubtotal())
                 .discount(booking.getDiscountAmount())
                 .tax(booking.getTaxAmount())
