@@ -82,10 +82,28 @@ public class PaymentUsecaseImpl implements PaymentUsecase {
 
     }
 
+    @Override
+    public Payment getPaymentById(Long paymentId){
+        return paymentRepository.findById(paymentId).orElseThrow(() -> new DataNotFoundException("Payment Data Not found"));
+    }
+
+
+    @Override
+    @Transactional
+    public Payment handlePaymentExpired(Long paymentId){
+        Payment newPayment  = paymentRepository.findById(paymentId).orElseThrow(() -> new DataNotFoundException("Payment Data Not found"));
+        newPayment.setPaymentStatus(PaymentStatus.TIME_EXPIRED);
+        Booking cancelledBooking = newPayment.getBooking();
+        bookingServerUsecase.changeBookingStatus(cancelledBooking, BookingStatus.PAYMENT_EXPIRED);
+        Payment savedPayment = paymentRepository.save(newPayment);
+        return savedPayment;
+    }
+
 
     public void processPayment(Payment payment) {
-        // Payment processing logic
+        log.info("Payment for :{}", payment.getId());
         if (payment.getPaymentStatus().equals(PaymentStatus.COMPLETED)) {
+            log.info("Completed Payment");
             PaymentResponseSseDTO response = new PaymentResponseSseDTO();
             response.setPaymentId(payment.getId());
             response.setPaymentStatus(PaymentStatus.COMPLETED.toString());

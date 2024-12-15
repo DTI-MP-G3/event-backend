@@ -6,6 +6,8 @@ import com.event.event.entity.Event;
 import com.event.event.entity.Ticket.Ticket;
 import com.event.event.entity.Ticket.TicketType;
 import com.event.event.entity.User;
+import com.event.event.entity.booking.Booking;
+import com.event.event.entity.booking.BookingDetail;
 import com.event.event.enums.TicketStatus;
 import com.event.event.infrastructure.events.repository.EventRepository;
 import com.event.event.infrastructure.ticketTypes.repository.TicketTypeRepository;
@@ -14,10 +16,12 @@ import com.event.event.infrastructure.tickets.dto.RequestPurchaseTicketDTO;
 import com.event.event.infrastructure.tickets.repository.TicketRepository;
 import com.event.event.infrastructure.tickets.util.TicketCodeGenerator;
 import com.event.event.infrastructure.users.repository.UsersRepository;
+import com.event.event.usecase.booking.BookingServerUsecase;
 import com.event.event.usecase.ticket.PurchaseTicketUsecase;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -34,13 +38,22 @@ public class PurchaseTicketUsecaseImpl implements PurchaseTicketUsecase {
     private final UsersRepository usersRepository;
     private final TicketCodeGenerator ticketCodeGenerator;
 
-    public PurchaseTicketUsecaseImpl(EventRepository eventRepository, TicketRepository ticketRepository, TicketTypeRepository ticketTypeRepository, UsersRepository usersRepository, TicketCodeGenerator ticketCodeGenerator) {
+    private final BookingServerUsecase bookingServerUsecase;
+
+    public PurchaseTicketUsecaseImpl(EventRepository eventRepository, TicketRepository ticketRepository,
+                                     TicketTypeRepository ticketTypeRepository,
+                                     UsersRepository usersRepository,
+                                     TicketCodeGenerator ticketCodeGenerator,
+                                     BookingServerUsecase bookingServerUsecase) {
         this.eventRepository = eventRepository;
         this.ticketRepository = ticketRepository;
         this.ticketTypeRepository = ticketTypeRepository;
         this.usersRepository = usersRepository;
         this.ticketCodeGenerator = ticketCodeGenerator;
+        this.bookingServerUsecase = bookingServerUsecase;
     }
+
+
 
     @Override
     @Transactional
@@ -112,7 +125,7 @@ public class PurchaseTicketUsecaseImpl implements PurchaseTicketUsecase {
         List<Ticket> newTickets = new ArrayList<>();
         for (int i = 0 ; i < ticketDto.getQuota() ; i++){
             Long nextId = lastId + i+1;
-            String newTicketCode= ticketCodeGenerator.generateTicketCode(eventId, ticketDto.getTicketTypeId(),nextId);
+            String newTicketCode= TicketCodeGenerator.generateTicketCode(eventId, ticketDto.getTicketTypeId(),nextId);
             Ticket ticket= Ticket.builder()
                     .ticketType(ticketType)
                     .user(user)
@@ -132,6 +145,61 @@ public class PurchaseTicketUsecaseImpl implements PurchaseTicketUsecase {
     };
 
 
+    @Transactional
+    @Override
+    public List<PurchaseTicketResponseDTO> generateTicketsFromBooking(Long bookingId) {
+        Booking booking = bookingServerUsecase.getBookingById(bookingId)
+                .orElseThrow(() -> new DataNotFoundException("Booking not found"));
+
+        List<Ticket> tickets = new ArrayList<>();
+        Long lastId = getMaxId();
+        int counter = 0;
+
+        for (BookingDetail detail : booking.getBookingDetails()) {
+            for (int i = 0; i < detail.getQuantity(); i++) {
+                Long nextId = lastId + counter + 1;
+                String ticketCode = TicketCodeGenerator.generateTicketCode(
+                        booking.getEvent().getId(),
+                        detail.getTicketType().getId(),
+                        nextId
+                );
+
+                Ticket ticket = Ticket.builder()
+                        .ticketType(detail.getTicketType())
+                        .user(booking.getUser())
+                        .event(booking.getEvent())
+                        .status(TicketStatus.AVAILABLE)
+                        .purchaseDate(OffsetDateTime.now())
+                        .ticketCode(ticketCode)
+                        .build();
+
+                tickets.add(ticket);
+                counter++;
+            }
+        }
+
+        try {
+            log.info("saving ticket for bookingID:{}", bookingId);
+            List<Ticket> savedTickets = ticketRepository.saveAllAndFlush(tickets);
+            log.info("Saved tickets with IDs: {}", savedTickets.stream()
+                    .map(Ticket::getId)
+                    .collect(Collectors.toList()));
+            return
+                    savedTickets.stream()
+                            .map(this::mapToDTO)
+                            .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Failed saving tickets", e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    @Transactional
+    private Long getMaxId(){
+        return ticketRepository.getMaxId() != null ? ticketRepository.getMaxId() : 0L;
+    }
 
     private PurchaseTicketResponseDTO mapToDTO(Ticket ticket) {
         return PurchaseTicketResponseDTO.builder()

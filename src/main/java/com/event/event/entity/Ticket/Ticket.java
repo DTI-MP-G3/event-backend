@@ -5,10 +5,7 @@ import com.event.event.entity.User;
 import com.event.event.enums.TicketStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.OffsetDateTime;
@@ -18,6 +15,8 @@ import java.time.OffsetDateTime;
 @Setter
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="tickets")
 public class Ticket {
     @Id

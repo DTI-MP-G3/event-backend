@@ -21,4 +21,8 @@ public interface PaymentUsecase {
 //    paymentByQR
     Payment payByQr(Long paymentId);
 
+    Payment getPaymentById(Long paymentId);
+
+    Payment handlePaymentExpired(Long PaymentId);
+
 }

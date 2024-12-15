@@ -12,6 +12,8 @@ public interface PurchaseTicketUsecase {
     List<PurchaseTicketResponseDTO> PurchaseBulkTicket(Integer eventId, Long userId, List<RequestPurchaseTicketDTO> ticketDtos);
 
     List<PurchaseTicketResponseDTO>  PurchaseTicket(Integer eventId, Long userId, RequestPurchaseTicketDTO ticketDto);
+    List<PurchaseTicketResponseDTO> generateTicketsFromBooking(Long bookingId);
+
 
 
 }

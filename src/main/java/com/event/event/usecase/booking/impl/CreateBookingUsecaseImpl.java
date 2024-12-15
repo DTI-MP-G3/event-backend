@@ -175,6 +175,21 @@ public class CreateBookingUsecaseImpl implements CreateBookingUsecase {
     }
 
 
+    @Transactional
+    public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->  new DataNotFoundException("Data not found"));
+        booking.setStatus(BookingStatus.CANCELLED);
+        bookingRepository.save(booking);
+
+        List<BookingDetail> bookingDetails = booking.getBookingDetails();
+        for (BookingDetail detail : bookingDetails) {
+            TicketType ticketType = detail.getTicketType();
+            ticketTypeUsecase.increaseTicketAvailability(ticketType, detail.getQuantity());
+        }
+        bookingRepository.save(booking);
+    }
+
+
 
 
     private void validateTicketTypeAvailability(List<BookingDetailRequestDTO> detailsDTO, Map<Long, TicketType> ticketTypeMap) {

@@ -20,5 +20,4 @@ public class PurchaseTicketResponseDTO {
     private OffsetDateTime purchaseDate;
     private TicketStatus status;
 
-
 }
