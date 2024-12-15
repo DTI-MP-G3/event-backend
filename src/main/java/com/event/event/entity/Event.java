@@ -73,7 +73,7 @@ public class Event {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
-    @OneToMany( mappedBy = "event", cascade = CascadeType.PERSIST )
+    @OneToMany( mappedBy = "event", cascade = CascadeType.ALL  )
     private Set<TicketType> ticketTypes;
 
 

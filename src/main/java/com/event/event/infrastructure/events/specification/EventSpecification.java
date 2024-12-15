@@ -1,6 +1,7 @@
 package com.event.event.infrastructure.events.specification;
 
 import com.event.event.entity.Event;
+import com.event.event.enums.EventStatus;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import java.time.OffsetDateTime;
@@ -38,6 +39,7 @@ public class EventSpecification {
             }
 
             // Add condition to exclude deleted events
+            predicates.add(criteriaBuilder.equal(root.get("status"), EventStatus.PUBLISHED));
             predicates.add(criteriaBuilder.isNull(root.get("deletedAt")));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

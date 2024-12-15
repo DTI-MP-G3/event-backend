@@ -11,6 +11,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 public class EventSearchResponseDTO {
     private String name;
+    private Integer eventId;
     private String venue;
     private OffsetDateTime eventDate;
 

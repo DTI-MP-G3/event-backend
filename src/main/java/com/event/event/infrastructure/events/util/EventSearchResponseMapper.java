@@ -13,8 +13,10 @@ public class EventSearchResponseMapper {
     public EventSearchResponseDTO toDTO(Event event) {
         return new EventSearchResponseDTO(
                 event.getName(),
+                event.getId(),
                 event.getVenue(),
                 event.getEventDate()
+
         );
     }
 

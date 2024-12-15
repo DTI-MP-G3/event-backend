@@ -63,7 +63,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/register").permitAll()
                         .requestMatchers("/api/v1/users/registerEO").permitAll()
                         .requestMatchers("api/v1/events/search/**").permitAll()
-                        .requestMatchers("api/v1/payments/stream/**").permitAll()
                         .requestMatchers("api/v1/payments/QR/**").permitAll()
 
                         .anyRequest().authenticated())

@@ -14,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+
 @Entity
 @Getter
 @Setter
